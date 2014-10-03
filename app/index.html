@@ -44,10 +44,14 @@
 
     <script type="text/template" id="homepage-menu-template">
       <h2><a href="#" alt="Menu">Menu</a></h2>
+      <button class="hidden close-menu">X</button>
+      <a href="#" alt="Order online" class="order-button hidden">Order online!</a>
+      <ul>
+      </ul>
     </script>
 
     <script type="text/template" id="homepage-info-template">
-      <h2><a href="#" alt="Location and Hours">Location and Hours</a></h2>
+      <h2>Location and Hours</h2>
       <h3>Hours</h3>
       <p>Monday-Thursday: <%= weekdayHrs %></p>
       <p>Friday-Saturday: <%= weekendHrs %></p>
@@ -57,9 +61,9 @@
     </script>
 
     <script type="text/template" id="menu-item-template">
-      <h3>menu item name</h3>
-      <p>menu item description</p>
-      <span>$5</span>
+      <h3><%= name %></h3>
+      <span>$<%= price %></span>
+      <p><%= description %></p>
     </script>
 
     <!-- build:js scripts/vendor.js -->

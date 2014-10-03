@@ -6,7 +6,8 @@ var menuItems = [
         options: {
             meats: true,
             spice: true,
-            vegan: true}
+            vegan: true},
+        price: 9
     }, {
         name: 'Thai Iced Tea',
         description: 'Yummy delicious thai iced tea is so good you will love it.',
@@ -14,7 +15,9 @@ var menuItems = [
         options: {
             meats: false,
             spice: false,
-            vegan: true}
+            vegan: true},
+        price: 3
+
     }, {
         name: 'Pad Thai',
         description: 'Yummy delicious pad thai is so good you will love it.',
@@ -22,7 +25,8 @@ var menuItems = [
         options: {
             meats: true,
             spice: true,
-            vegan: true}
+            vegan: true},
+        price: 9
     }, {
         name: 'Spring Rolls',
         description: 'Yummy delicious spring rolls have pork in them you will love it.',
@@ -31,6 +35,7 @@ var menuItems = [
             meats: false,
             spice: false,
             vegan: false,
-            condiments: true}
+            condiments: true},
+        price: 6
     }
 ];
