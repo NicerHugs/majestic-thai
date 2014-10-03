@@ -7,16 +7,26 @@
                                   //Views
 //==============================================================================
 
-    App.MenuItemView = Backbone.View.extend({
+    App.BaseView = Backbone.View.extend({
+        initialize: function(options) {
+            options = options || {};
+            this.$container = options.$container || $('main');
+            this.$container.append(this.el);
+        }
+    });
+
+    App.MenuItemView = App.BaseView.extend({
         tagName: 'li',
         className: 'menu-item',
     });
 
-    App.MenuView = Backbone.View.extend({
+    App.MenuView = App.BaseView.extend({
         tagName: 'ul',
         className: 'menu',
-        initialize: function() {
-            $('main').append(this.el);
+        initialize: function(options) {
+            options = options || {};
+            this.$container = options.$container || $('main');
+            this.$container.append(this.el);
         }
     });
 
@@ -46,7 +56,6 @@
     $(document).ready(function() {
         var menu = new App.Menu(menuItems);
         var menuView = new App.MenuView({collection: menu});
-        console.log(menuView);
     });
 
 })();
