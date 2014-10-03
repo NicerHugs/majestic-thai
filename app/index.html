@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
-    <title>firebase app</title>
+    <title>Majestic Thai</title>
 
     <link rel="icon" type="image/.ico" href="favicon.ico?v1">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -26,7 +26,29 @@
   <body>
 
     <div class="container">
+      <header>
+        <h1>Majestic Thai</h1>
+        <span>makes you so happy yum</span>
+      </header>
+      <main>
+        <h2>Menu</h2>
+      </main>
+      <footer>
+        <nav>
+          <a href="#">Home</a>
+          <a href="#">Menu</a>
+          <a href="#">Reviews</a>
+          <a href="#">Info</a>
+        </nav>
+        <span>Built by NicerHugs</span>
+      </footer>
     </div>
+
+    <script type="text/template" id="menu-item-template">
+      <h3>menu item name</h3>
+      <p>menu item description</p>
+      <span>$5</span>
+    </script>
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
@@ -39,6 +61,7 @@
     <!-- endbuild -->
 
         <!-- build:js scripts/main.js -->
+        <script src="scripts/menu-items.js"></script>
         <script src="scripts/main.js"></script>
         <!-- endbuild -->
 </body>

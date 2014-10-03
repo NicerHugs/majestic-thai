@@ -7,24 +7,36 @@
                                   //Views
 //==============================================================================
 
-    App.View = Backbone.View.extend({
-
+    App.MenuItemView = Backbone.View.extend({
+        tagName: 'li',
+        className: 'menu-item',
     });
+
+    App.MenuView = Backbone.View.extend({
+        tagName: 'ul',
+        className: 'menu',
+        initialize: function() {
+            $('main').append(this.el);
+        }
+    });
+
 
 //==============================================================================
                                   //Models
 //==============================================================================
 
-    App.Model = Backbone.Model.extend({
+    App.MenuItem = Backbone.Model.extend({
+        initialize: function() {
 
+        }
     });
 
 //==============================================================================
                                   //Collections
 //==============================================================================
 
-    App.Collection = Backbone.Collection.extend({
-
+    App.Menu = Backbone.Collection.extend({
+        model: App.MenuItem,
     });
 
 //==============================================================================
@@ -32,7 +44,26 @@
 //==============================================================================
 
     $(document).ready(function() {
-
+        var menu = new App.Menu(menuItems);
+        var menuView = new App.MenuView({collection: menu});
+        console.log(menuView);
     });
 
 })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
