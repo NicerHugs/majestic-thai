@@ -12,21 +12,38 @@
             options = options || {};
             this.$container = options.$container || $('main');
             this.$container.append(this.el);
+            this.$template = options.$template;
+            this.render();
+        },
+        template: function() {
+            return _.template(this.$template.text());
+        },
+    });
+
+//Single item on the menu's view
+    App.MenuItemView = App.BaseView.extend({
+        tagName: 'li',
+        className: 'menu-item'
+    });
+
+//Any reference to the entire menu's view
+    App.MenuView = App.BaseView.extend({
+        tagName: 'section',
+        className: 'menu',
+        render: function() {
+            this.$container.append(this.el);
+            this.$el.html(this.template(this.collection));
         }
     });
 
-    App.MenuItemView = App.BaseView.extend({
-        tagName: 'li',
-        className: 'menu-item',
-    });
-
-    App.MenuView = App.BaseView.extend({
-        tagName: 'ul',
-        className: 'menu',
-        initialize: function(options) {
-            options = options || {};
-            this.$container = options.$container || $('main');
+//Any reference to contact/loctation information's view
+    App.InfoView = App.BaseView.extend({
+        tagName: 'section',
+        className: 'info',
+        render: function() {
             this.$container.append(this.el);
+            this.$el.html(this.template(this.model));
+
         }
     });
 
@@ -36,10 +53,13 @@
 //==============================================================================
 
     App.MenuItem = Backbone.Model.extend({
-        initialize: function() {
-
-        }
+      
     });
+
+    App.Info = Backbone.Model.extend({
+
+    });
+
 
 //==============================================================================
                                   //Collections
@@ -55,7 +75,15 @@
 
     $(document).ready(function() {
         var menu = new App.Menu(menuItems);
-        var menuView = new App.MenuView({collection: menu});
+        var homeMenuView = new App.MenuView({
+            collection: menu,
+            $template: $('#homepage-menu-template')
+        });
+        var info = new App.Info();
+        var homeInfoView = new App.InfoView({
+            model: info,
+            $template: $('#homepage-info-template')
+        });
     });
 
 })();
