@@ -51,6 +51,12 @@ section {
     width: 100%
   }
 
+  #new-user-login {
+    input {
+      margin-bottom: 5px;
+    }
+  }
+
   .cancel-login {
     position: absolute;
     right: rem(10);

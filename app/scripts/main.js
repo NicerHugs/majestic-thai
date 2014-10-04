@@ -90,10 +90,41 @@
             this.$el.html(this.template(this.model));
         },
         events: {
-            'click .cancel-login': 'cancelLogin'
+            'click .cancel-login': 'cancelLogin',
+            'click #new-user-login': 'openNewUserForm'
         },
         cancelLogin: function(e) {
             e.preventDefault();
+            this.remove();
+        },
+        openNewUserForm: function(e) {
+            e.preventDefault();
+            new App.NewUserView({
+                model: this.model,
+                $container: this.$el.parent(),
+                $template: $('#new-user-template')
+            });
+            this.remove();
+        }
+    });
+
+//new user login (create acct)
+    App.NewUserView = App.BaseView.extend({
+        className: 'user-login',
+        render: function() {
+            this.$container.append(this.el);
+            this.$el.html(this.template(this.model));
+        },
+        events: {
+            'click .cancel-login': 'cancelAcctCreation',
+        },
+        cancelAcctCreation: function(e) {
+            e.preventDefault();
+            new App.UserLoginView({
+                model: new App.User(),
+                $container: this.$el.parent(),
+                $template: $('#user-login-template')
+            });
             this.remove();
         }
     });
