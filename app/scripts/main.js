@@ -13,8 +13,8 @@
             this.$container = options.$container || $('main');
             this.$template = options.$template;
             this.render();
-            if (this.model)
-              this.listenTo(this.model, 'destroy', this.remove);
+            this.listenTo(this.model, 'destroy', this.remove);
+            this.listenTo(this.model, 'change', this.render)
         },
         template: function() {
             return _.template(this.$template.text());
@@ -36,6 +36,12 @@
     App.MenuView = App.BaseView.extend({
         tagName: 'section',
         className: 'menu',
+        initialize: function(options) {
+            options = options || {};
+            this.$container = options.$container || $('main');
+            this.$template = options.$template;
+            this.render();
+        },
         render: function() {
             this.$container.append(this.el);
             this.$el.html(this.template(this.collection));
@@ -45,7 +51,6 @@
             'click button' : 'closeMenu',
             'click .order-button' : 'openUserLogin'
         },
-        //expand the menu on click by rendering all models in menu collection
         expandMenu: function(e) {
             e.preventDefault();
             var that = this;
@@ -53,14 +58,13 @@
             this.$el.find('button').removeClass('hidden');
             this.$el.find('ul').html('');
             _.each(this.collection.models, function(model) {
-                that.renderMenuItem(model);
-            });
+                that.renderMenuItem(model, that);});
         },
         //render a menuItemView and put it inside the ul of this view.
-        renderMenuItem: function(model) {
+        renderMenuItem: function(model, parent) {
             var newItemView = new App.MenuItemView({
                 model: model,
-                $container: this.$el.find('ul'),
+                $container: parent.$el.find('ul'),
                 $template: $('#menu-item-template')
             });
             newItemView.render();
@@ -121,7 +125,7 @@
         cancelAcctCreation: function(e) {
             e.preventDefault();
             new App.UserLoginView({
-                model: new App.User(),
+                model: this.model,
                 $container: this.$el.parent(),
                 $template: $('#user-login-template')
             });
@@ -172,8 +176,9 @@
 //==============================================================================
 
 //The collection of menu-item models
-    App.Menu = Backbone.Collection.extend({
+    App.Menu = Backbone.Firebase.Collection.extend({
         model: App.MenuItem,
+        firebase: "https://sweltering-heat-7867.firebaseio.com/MajesticThai/menuItems"
     });
 
 //==============================================================================
@@ -181,14 +186,13 @@
 //==============================================================================
 
     $(document).ready(function() {
-        var menu = new App.Menu(menuItems);
+        var menu = new App.Menu();
         var homeMenuView = new App.MenuView({
             collection: menu,
             $template: $('#homepage-menu-template')
         });
         var info = new App.Info({
-          }
-        );
+        });
         var homeInfoView = new App.InfoView({
             model: info,
             $template: $('#homepage-info-template')
