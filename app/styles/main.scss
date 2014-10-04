@@ -2,6 +2,10 @@
 @import '../../bower_components/bourbon/dist/bourbon';
 @import '../../bower_components/neat/app/assets/stylesheets/neat';
 
+.hidden {
+  display: none;
+}
+
 header {
   background: url('../images/sm-header.jpg');
   background-size: cover;
@@ -23,10 +27,33 @@ header {
   }
 }
 
-section{
+section {
   overflow: auto;
 }
 
-.hidden {
-  display: none;
+.user-login {
+  background: #fff;
+  border: solid 1px;
+  border-radius: 3px;
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  height: 400px;
+  width: 80%;
+
+  form {
+    padding: rem(20);
+  }
+
+  input {
+    margin-bottom: 20px;
+    height: rem(30);
+    width: 100%
+  }
+
+  .cancel-login {
+    position: absolute;
+    right: rem(10);
+    bottom: rem(10);
+  }
 }

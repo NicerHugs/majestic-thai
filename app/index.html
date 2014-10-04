@@ -66,6 +66,20 @@
       <p><%= description %></p>
     </script>
 
+    <script type="text/template" id="user-login-template">
+      <form id="existing-user-login">
+        <p>Please Login:</p>
+        <input type="email" placeholder="you@example.com"/>
+        <input type="password" placeholder="password"/>
+        <input type="submit" value="login" />
+      </form>
+      <form id="new-user-login">
+        <p>First time here?</p>
+        <input type="submit" value="create an account"/>
+      </form>
+      <a href="#" class="cancel-login">cancel</a>
+    </script>
+
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="../bower_components/jquery/dist/jquery.js"></script>

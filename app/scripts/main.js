@@ -9,7 +9,6 @@
 
     App.BaseView = Backbone.View.extend({
         initialize: function(options) {
-            var that = this;
             options = options || {};
             this.$container = options.$container || $('main');
             this.$template = options.$template;
@@ -43,7 +42,8 @@
         },
         events: {
             'click h2 a': 'expandMenu',
-            'click button' : 'closeMenu'
+            'click button' : 'closeMenu',
+            'click .order-button' : 'openUserLogin'
         },
         //expand the menu on click by rendering all models in menu collection
         expandMenu: function(e) {
@@ -53,7 +53,6 @@
             this.$el.find('button').removeClass('hidden');
             this.$el.find('ul').html('');
             _.each(this.collection.models, function(model) {
-                console.log(model);
                 that.renderMenuItem(model);
             });
         },
@@ -72,10 +71,34 @@
             $(e.target).addClass('hidden');
             this.$el.find('.order-button').addClass('hidden');
             this.$el.find('ul').html('');
+        },
+        openUserLogin: function(e) {
+            e.preventDefault();
+            new App.UserLoginView({
+                model: new App.User(),
+                $container: this.$el,
+                $template: $('#user-login-template')
+            });
         }
     });
 
-//Any reference to contact/loctation information's view
+//user login (popup) view
+    App.UserLoginView = App.BaseView.extend({
+        className: 'user-login',
+        render: function() {
+            this.$container.append(this.el);
+            this.$el.html(this.template(this.model));
+        },
+        events: {
+            'click .cancel-login': 'cancelLogin'
+        },
+        cancelLogin: function(e) {
+            e.preventDefault();
+            this.remove();
+        }
+    });
+
+//homepage contact/loctation information's view
     App.InfoView = App.BaseView.extend({
         tagName: 'section',
         className: 'info',
@@ -102,6 +125,12 @@
             weekdayHrs: '12-9pm',
             weekendHrs: '12pm-1am',
             sundayHrs: '10am-9pm'
+        }
+    });
+
+//A single user
+    App.User = Backbone.Model.extend({
+        defaults: {
         }
     });
 
