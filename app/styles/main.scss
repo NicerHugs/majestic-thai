@@ -6,6 +6,10 @@
   display: none;
 }
 
+.invalid {
+  outline-color: #f00;
+}
+
 header {
   background: url('../images/sm-header.jpg');
   background-size: cover;
@@ -31,7 +35,15 @@ section {
   overflow: auto;
 }
 
-.user-login {
+.working-order {
+  background: #fff;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.user-login,
+.order-item-options {
   background: #fff;
   border: solid 1px;
   border-radius: 3px;
@@ -39,6 +51,7 @@ section {
   top: 10%;
   left: 10%;
   height: 400px;
+  overflow: scroll;
   width: 80%;
 
   form {
@@ -57,9 +70,34 @@ section {
     }
   }
 
-  .cancel-login {
-    position: absolute;
-    right: rem(10);
-    bottom: rem(10);
+  .cancel-login,
+  .cancel-item {
+    float: right;
+    margin-right: rem(10);
+    margin-bottom: rem(10);
+    // position: absolute;
+    // right: rem(10);
+    // bottom: rem(10);
+  }
+}
+
+.option-list {
+  label {
+    display: inline-block;
+    width: 23%;
+    font-size: rem(12);
+    text-align: center;
+  }
+
+  input {
+    margin-left: 35%;
+
+    &[type="submit"] {
+      margin: rem(25) 0 rem(10);
+    }
+  }
+
+  textarea {
+    width: 100%;
   }
 }

@@ -14,7 +14,7 @@
             this.$template = options.$template;
             this.render();
             this.listenTo(this.model, 'destroy', this.remove);
-            this.listenTo(this.model, 'change', this.render)
+            this.listenTo(this.model, 'change', this.render);
         },
         template: function() {
             return _.template(this.$template.text());
@@ -29,6 +29,82 @@
         render: function() {
             this.$container.append(this.el);
             this.$el.html(this.template(this.model.attributes));
+        }
+    });
+
+//Single item view on the orderable menu
+    App.OrderMenuItemView = App.BaseView.extend({
+        tagName: 'li',
+        className: 'menu-item',
+        template: _.template($('#order-menu-item-template').text()),
+        render: function() {
+            this.$container.append(this.el);
+            this.$el.html(this.template(this.model.attributes));
+        },
+        events: {
+            'click h3': 'selectItemOptions'
+        },
+        selectItemOptions: function(e) {
+            e.preventDefault();
+            var itemOptions = new App.OrderItemOptionsView({
+                model: this.model,
+            });
+        }
+    });
+
+//An individual menu item's options, used to get user's desired options when
+//user tries to add the item to their order
+    App.OrderItemOptionsView = App.BaseView.extend({
+        className: 'order-item-options',
+        template: _.template($('#order-item-options-template').text()),
+        render: function() {
+            this.$container.append(this.el);
+            this.$el.html(this.template(this.model.attributes));
+            this.renderOptions();
+        },
+        events: {
+            'click .cancel-item' : 'cancelItemAdd'
+        },
+        cancelItemAdd: function(e) {
+            e.preventDefault();
+            this.remove();
+        },
+        renderOptions: function() {
+            if (this.model.get('vegan')) {
+                var veganOption = new App.ItemOptionView({
+                    model: this.model,
+                    $container: this.$el.find('form'),
+                    $template: $('#vegan-option-template')
+                });
+            }
+            if (this.model.get('spice')) {
+                var spiceOption = new App.ItemOptionView({
+                    model: this.model,
+                    $container: this.$el.find('form'),
+                    $template: $('#spice-option-template')
+                });
+            }
+            if (this.model.get('meat')) {
+                var meatOption = new App.ItemOptionView({
+                    model: this.model,
+                    $container: this.$el.find('form'),
+                    $template: $('#meat-option-template')
+                });
+            }
+        }
+    });
+
+//the options views for each of an item's available options (inserted into
+//item-options view)
+    App.ItemOptionView = App.BaseView.extend({
+        initialize: function(options) {
+            options = options || {};
+            this.$container = options.$container;
+            this.$template = options.$template;
+            this.render();
+        },
+        render: function() {
+            this.$container.prepend(this.template(this.model));
         }
     });
 
@@ -47,9 +123,9 @@
             this.$el.html(this.template(this.collection));
         },
         events: {
-            'click h2 a': 'expandMenu',
-            'click button' : 'closeMenu',
-            'click .order-button' : 'openUserLogin'
+            'click h2 a'          : 'expandMenu',
+            'click button'        : 'closeMenu',
+            'click .order-button' : 'startNewOrder'
         },
         expandMenu: function(e) {
             e.preventDefault();
@@ -65,7 +141,13 @@
             var newItemView = new App.MenuItemView({
                 model: model,
                 $container: parent.$el.find('ul'),
-                $template: $('#menu-item-template')
+            });
+            newItemView.render();
+        },
+        renderOrderMenuItem: function(model, parent) {
+            var newItemView = new App.OrderMenuItemView({
+                model: model,
+                $container: parent.$el.find('ul'),
             });
             newItemView.render();
         },
@@ -75,6 +157,19 @@
             $(e.target).addClass('hidden');
             this.$el.find('.order-button').addClass('hidden');
             this.$el.find('ul').html('');
+        },
+        startNewOrder: function(e) {
+            e.preventDefault();
+            var that = this;
+            this.$el.find('ul').html('');
+            _.each(this.collection.models, function(model) {
+                that.renderOrderMenuItem(model, that);});
+            var newOrder = new App.Order();
+            var workingOrder = new App.WorkingOrderView({
+                model: newOrder,
+                $container: $('main'),
+                $template: $('#new-order-template')
+            });
         },
         openUserLogin: function(e) {
             e.preventDefault();
@@ -86,6 +181,17 @@
         }
     });
 
+//working order view is where a working order is displayed until it is sent to
+//the server
+    App.WorkingOrderView = App.BaseView.extend({
+        className: 'working-order',
+        render: function() {
+            this.$container.append(this.el);
+            this.$el.html(this.template(this.model));
+        }
+    });
+
+
 //user login (popup) view
     App.UserLoginView = App.BaseView.extend({
         className: 'user-login',
@@ -94,8 +200,8 @@
             this.$el.html(this.template(this.model));
         },
         events: {
-            'click .cancel-login': 'cancelLogin',
-            'click #new-user-login': 'openNewUserForm'
+            'click .cancel-login'   : 'cancelLogin',
+            'click #new-user-login' : 'openNewUserForm'
         },
         cancelLogin: function(e) {
             e.preventDefault();
@@ -120,7 +226,9 @@
             this.$el.html(this.template(this.model));
         },
         events: {
-            'click .cancel-login': 'cancelAcctCreation',
+            'click .cancel-login'               : 'cancelAcctCreation',
+            'keyup #new-user-password-validate' : 'validatePassword',
+            'submit'                            : 'makeNewUser'
         },
         cancelAcctCreation: function(e) {
             e.preventDefault();
@@ -130,6 +238,31 @@
                 $template: $('#user-login-template')
             });
             this.remove();
+        },
+        validatePassword: function(e) {
+            if ($('#new-user-password').val() !== $('#new-user-password-validate').val()) {
+                $('#new-user-password-validate').addClass('invalid');
+                return false;
+            }
+            else {
+                $('#new-user-password-validate').removeClass('invalid');
+                return true;
+            }
+        },
+        makeNewUser: function(e) {
+            e.preventDefault();
+            if (this.validatePassword()) {
+                var users = new App.Users();
+                var newUser = users.create({
+                    name: $('#new-user-name').val(),
+                    address: $('#new-user-addr').val(),
+                    zipcode: $('#new-user-zip').val(),
+                    email: $('#new-user-email').val(),
+                    phone: $('#new-user-phone').val(),
+                    password: $('#new-user-password').val()
+                });
+                console.log(users.get(newUser.id));
+            }
         }
     });
 
@@ -169,6 +302,11 @@
         }
     });
 
+//A single order
+    App.Order = Backbone.Model.extend({
+
+    });
+
 
 
 //==============================================================================
@@ -180,6 +318,19 @@
         model: App.MenuItem,
         firebase: "https://sweltering-heat-7867.firebaseio.com/MajesticThai/menuItems"
     });
+
+//The collection of users
+    App.Users = Backbone.Firebase.Collection.extend({
+        model: App.User,
+        firebase: "https://sweltering-heat-7867.firebaseio.com/MajesticThai/users"
+    });
+
+//The collections of orders
+    App.Orders = Backbone.Firebase.Collection.extend({
+        model: App.Order,
+        firebase: "https://sweltering-heat-7867.firebaseio.com/MajesticThai/orders"
+    });
+
 
 //==============================================================================
                                   //Glue

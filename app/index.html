@@ -66,6 +66,65 @@
       <p><%= description %></p>
     </script>
 
+    <script type="text/template" id="order-menu-item-template">
+      <a href="#"><h3><%= name %></h3></a>
+      <span>$<%= price %></span>
+      <p><%= description %></p>
+    </script>
+
+    <script type="text/template" id="new-order-template">
+        <h2>working order</h2>
+    </script>
+
+    <script type="text/template" id="order-item-options-template">
+      <p>Please select your <%= name %> options:</p>
+      <form>
+        <div class="option-list">
+          <p>Please include any special requests:</p>
+          <textarea></textarea>
+        <input type="submit" value="Add <%= name %>"/>
+      </form>
+      <a href="#" class="cancel-item">cancel</a>
+    </script>
+
+    <script type="text/template" id="vegan-option-template">
+      <div class="option-list">
+        <p>Check to make this item vegan:</p>
+        <label name="vegan" value="vegan">
+          <input class="option" type="checkbox" value="vegan">
+        </label>
+      </div>
+    </script>
+
+    <script type="text/template" id="spice-option-template">
+      <div class="option-list">
+        <p>Choose a spice level:</p>
+        <label name="spice" value="mild">mild
+          <input class="option" type="radio" name="spice" value="mild"></label>
+        <label name="spice">medium
+          <input class="option" type="radio" name="spice" value="medium"></label>
+        <label name="spice">hot
+          <input class="option" type="radio" name="spice" value="hot"></label>
+        <label name="spice">Thai hot
+          <input class="option" type="radio" name="spice" value="Thai hot"></label>
+      </div>
+    </script>
+
+    <script type="text/template" id="meat-option-template">
+      <div class="option-list">
+        <p>Choose a meat:</p>
+        <label name="meat" value="none">none
+          <input class="option" type="radio" name="meat" value="none"></label>
+        <label name="meat" value="tofu">tofu
+          <input class="option" type="radio" name="meat" value="tofu"></label>
+        <label name="meat" value="chicken">chicken
+          <input class="option" type="radio" name="meat" value="chicken"></label>
+        <label name="meat" value="pork">pork
+          <input class="option" type="radio" name="meat" value="pork"></label>
+        <label name="meat" value="shrimp">shrimp
+          <input class="option" type="radio" name="meat" value="shrimp"><label>
+    </script>
+
     <script type="text/template" id="user-login-template">
       <form id="existing-user-login">
         <p>Please Login:</p>
@@ -83,13 +142,13 @@
     <script type="text/template" id="new-user-template">
       <form id="new-user-login">
         <p>Please create an account:</p>
-        <input type="text" placeholder="Name"/>
-        <input type="text" placeholder="Delivery address">
-        <input type="text" placeholder="City and State">
-        <input type="email" placeholder="you@example.com"/>
-        <input type="tel" placeholder="phone number"/>
-        <input type="password" placeholder="password"/>
-        <input type="password" placeholder="verify password"/>
+        <input id="new-user-name" type="text" placeholder="Name"/>
+        <input id="new-user-addr" type="text" placeholder="Delivery address">
+        <input id="new-user-zip" type="text" placeholder="zipcode">
+        <input id="new-user-email" type="email" placeholder="you@example.com"/>
+        <input id="new-user-phone" type="tel" placeholder="phone number"/>
+        <input id="new-user-password" type="password" placeholder="password"/>
+        <input id="new-user-password-validate" type="password" placeholder="verify password"/>
         <input type="submit" value="Create account" />
       </form>
       <a href="#" class="cancel-login">cancel</a>
