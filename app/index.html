@@ -74,6 +74,11 @@
 
     <script type="text/template" id="new-order-template">
         <h2>working order</h2>
+        <ul></ul>
+    </script>
+
+    <script type="text/template" id="working-order-item-template">
+        <%= name %>
     </script>
 
     <script type="text/template" id="order-item-options-template">
@@ -91,7 +96,7 @@
       <div class="option-list">
         <p>Check to make this item vegan:</p>
         <label name="vegan" value="vegan">
-          <input class="option" type="checkbox" value="vegan">
+          <input class="option" type="checkbox" name="vegan">
         </label>
       </div>
     </script>

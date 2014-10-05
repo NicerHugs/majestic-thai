@@ -47,7 +47,8 @@
         selectItemOptions: function(e) {
             e.preventDefault();
             var itemOptions = new App.OrderItemOptionsView({
-                model: this.model,
+                collection: this.collection,
+                model: this.model
             });
         }
     });
@@ -63,7 +64,20 @@
             this.renderOptions();
         },
         events: {
-            'click .cancel-item' : 'cancelItemAdd'
+            'click .cancel-item' : 'cancelItemAdd',
+            'submit'             : 'addItem'
+        },
+        addItem: function(e) {
+            e.preventDefault();
+            var itemOptions = {
+                name: this.model.get('name'),
+                customize: $('textarea').val(),
+                spice: $('input[name=spice]:checked').val() || '',
+                meat: $('input[name=meat]:checked').val() || '',
+                vegan: $('input[name=vegan]').val()
+            };
+            this.collection.add(itemOptions);
+            this.remove();
         },
         cancelItemAdd: function(e) {
             e.preventDefault();
@@ -144,12 +158,14 @@
             });
             newItemView.render();
         },
-        renderOrderMenuItem: function(model, parent) {
+        renderOrderMenuItem: function(model, parent, orderItemsCollection) {
             var newItemView = new App.OrderMenuItemView({
+                collection: orderItemsCollection,
                 model: model,
                 $container: parent.$el.find('ul'),
             });
             newItemView.render();
+            this.orderCollection = orderItemsCollection;
         },
         //closes the expanded menu.
         closeMenu: function(e) {
@@ -158,18 +174,19 @@
             this.$el.find('.order-button').addClass('hidden');
             this.$el.find('ul').html('');
         },
+        //creates a new order and makes menu-items orderable
         startNewOrder: function(e) {
             e.preventDefault();
             var that = this;
-            this.$el.find('ul').html('');
-            _.each(this.collection.models, function(model) {
-                that.renderOrderMenuItem(model, that);});
-            var newOrder = new App.Order();
+            var newOrderItems = new App.OrderItems();
             var workingOrder = new App.WorkingOrderView({
-                model: newOrder,
+                collection: newOrderItems,
                 $container: $('main'),
                 $template: $('#new-order-template')
             });
+            this.$el.find('ul').html('');
+            _.each(this.collection.models, function(model) {
+                that.renderOrderMenuItem(model, that, newOrderItems);});
         },
         openUserLogin: function(e) {
             e.preventDefault();
@@ -181,16 +198,43 @@
         }
     });
 
-//working order view is where a working order is displayed until it is sent to
+//working order view is where a working order is displayed before it is sent to
 //the server
     App.WorkingOrderView = App.BaseView.extend({
         className: 'working-order',
+        initialize: function(options) {
+            options = options || {};
+            this.$container = options.$container;
+            this.$template = options.$template;
+            this.render();
+            this.listenTo(this.collection, 'add', this.render);
+        },
         render: function() {
+            var that = this;
             this.$container.append(this.el);
-            this.$el.html(this.template(this.model));
+            this.$el.html(this.template(this.collection));
+            _.each(this.collection.models, function(model) {
+                that.renderOrderItem(model, that);});
+        },
+        renderOrderItem: function(model) {
+            var newOrderItem = new App.OrderItemView({
+                model: model,
+                $container: this.$el.find('ul'),
+            });
+            newOrderItem.render();
         }
     });
 
+//The view for an individual item in a working order
+    App.OrderItemView = App.BaseView.extend({
+        tagName: 'li',
+        className: 'menu-item',
+        template: _.template($('#working-order-item-template').text()),
+        render: function() {
+            this.$container.append(this.el);
+            this.$el.html(this.template(this.model.attributes));
+        }
+    });
 
 //user login (popup) view
     App.UserLoginView = App.BaseView.extend({
@@ -307,6 +351,10 @@
 
     });
 
+//A single order item
+    App.OrderItem = Backbone.Model.extend({
+
+    });
 
 
 //==============================================================================
@@ -331,6 +379,10 @@
         firebase: "https://sweltering-heat-7867.firebaseio.com/MajesticThai/orders"
     });
 
+//A collection of items in a working order
+    App.OrderItems = Backbone.Collection.extend({
+        model: App.OrderItem
+    });
 
 //==============================================================================
                                   //Glue
