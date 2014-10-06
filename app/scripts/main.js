@@ -62,6 +62,7 @@
             this.$container.append(this.el);
             this.$el.html(this.template(this.model.attributes));
             this.renderOptions();
+            $('body').addClass('background');
         },
         events: {
             'click .cancel-item' : 'cancelItemAdd',
@@ -71,16 +72,18 @@
             e.preventDefault();
             var itemOptions = {
                 name: this.model.get('name'),
-                customize: $('textarea').val(),
-                spice: $('input[name=spice]:checked').val() || '',
-                meat: $('input[name=meat]:checked').val() || '',
-                vegan: $('input[name=vegan]').val()
+                customize: $('textarea').val() || 'none',
+                spice: $('input[name=spice]:checked').val() || 'medium',
+                meat: $('input[name=meat]:checked').val() || 'none',
+                vegan: $('input[name=vegan]:checked').val() ? 'yes' : 'no'
             };
             this.collection.add(itemOptions);
+            $('body').removeClass('background');
             this.remove();
         },
         cancelItemAdd: function(e) {
             e.preventDefault();
+            $('body').removeClass('background');
             this.remove();
         },
         renderOptions: function() {
@@ -182,7 +185,8 @@
             var workingOrder = new App.WorkingOrderView({
                 collection: newOrderItems,
                 $container: $('main'),
-                $template: $('#new-order-template')
+                $template: $('#new-order-template'),
+                parent: this
             });
             this.$el.find('ul').html('');
             _.each(this.collection.models, function(model) {
@@ -206,6 +210,7 @@
             options = options || {};
             this.$container = options.$container;
             this.$template = options.$template;
+            this.parent = options.parent;
             this.render();
             this.listenTo(this.collection, 'add', this.render);
         },
@@ -224,6 +229,7 @@
             newOrderItem.render();
         },
         events: {
+            'click a'                     : 'closeOrderView',
             'click .confirm-order-button' : 'openOrderConfirmation'
         },
         openOrderConfirmation: function(e) {
@@ -231,8 +237,14 @@
             new App.ConfirmOrderView({
                 collection: this.collection,
                 $container: $('main'),
-                $template: $('#order-confirmation-template')
+                $template: $('#order-confirmation-template'),
+                parent: this
             });
+        },
+        closeOrderView: function(e) {
+            e.preventDefault();
+            this.parent.expandMenu(e);
+            this.remove();
         }
     });
 
@@ -256,11 +268,13 @@
             options = options || {};
             this.$container = options.$container;
             this.$template = options.$template;
+            this.parent = options.parent;
             this.render();
             this.listenTo(this.collection, 'destroy change', this.render);
         },
         render: function() {
             var that = this;
+            $('body').addClass('background');
             this.$container.append(this.el);
             this.$el.html(this.template(this.collection));
             _.each(this.collection.models, function(model) {
@@ -271,15 +285,29 @@
                 model: model,
                 $container: this.$el.find('ul'),
             });
-            console.log(newOrderItem);
             newOrderItem.render();
         },
         events: {
-            'click .cancel-confirm' : 'cancelConfirmation'
+            'click .cancel-confirm' : 'cancelConfirmation',
+            'submit'                : 'submitOrder'
         },
         cancelConfirmation: function(e) {
             e.preventDefault();
+            $('body').removeClass('background');
             this.remove();
+        },
+        submitOrder: function(e) {
+            e.preventDefault();
+            var onlineOrder = {items: []};
+            _.each(this.collection.models, function(model) {
+                onlineOrder.items.push(model.attributes);
+            });
+            var onlineCollection = new App.Orders();
+            onlineCollection.add(onlineOrder);
+            this.parent.remove();
+            this.remove();
+
+            $('body').removeClass('background');
         }
     });
 
@@ -435,7 +463,7 @@
 //The collections of orders
     App.Orders = Backbone.Firebase.Collection.extend({
         model: App.Order,
-        firebase: "https://sweltering-heat-7867.firebaseio.com/MajesticThai/orders"
+        firebase: "https://sweltering-heat-7867.firebaseio.com/MajesticThai/orders",
     });
 
 //A collection of items in a working order

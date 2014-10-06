@@ -34,9 +34,7 @@
       </main>
       <footer>
         <nav>
-          <a href="#">Home</a>
-          <a href="#">Menu</a>
-          <a href="#">Place an order</a>
+          <a href="admin.html">Owner Login</a>
         </nav>
         <span>Built by NicerHugs</span>
       </footer>
@@ -73,8 +71,9 @@
     </script>
 
     <script type="text/template" id="new-order-template">
-        <h2>working order</h2>
+        <h2>Your order</h2>
         <ul></ul>
+        <a href="#">cancel</a>
         <input class="confirm-order-button" type="submit" value="Place your order">
     </script>
 
@@ -100,11 +99,12 @@
     </script>
 
     <script type="text/template" id="order-item-options-template">
-      <p>Please select your <%= name %> options:</p>
+      <h3>Please select your <%= name %> options:</h3>
       <form>
         <div class="option-list">
           <p>Please include any special requests:</p>
           <textarea></textarea>
+        </div>
         <input type="submit" value="Add <%= name %>"/>
       </form>
       <a href="#" class="cancel-item">cancel</a>
