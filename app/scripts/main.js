@@ -222,6 +222,17 @@
                 $container: this.$el.find('ul'),
             });
             newOrderItem.render();
+        },
+        events: {
+            'click .confirm-order-button' : 'openOrderConfirmation'
+        },
+        openOrderConfirmation: function(e) {
+            e.preventDefault();
+            new App.ConfirmOrderView({
+                collection: this.collection,
+                $container: $('main'),
+                $template: $('#order-confirmation-template')
+            });
         }
     });
 
@@ -230,6 +241,54 @@
         tagName: 'li',
         className: 'menu-item',
         template: _.template($('#working-order-item-template').text()),
+        render: function() {
+            this.$container.append(this.el);
+            this.$el.html(this.template(this.model.attributes));
+        }
+    });
+
+//confirm order view is a popup that shows the user their complete working order
+//with all details so they can review before placing order. it is responsible for
+//saving the order to the server.
+    App.ConfirmOrderView = App.BaseView.extend({
+        className: 'confirm-order',
+        initialize: function(options) {
+            options = options || {};
+            this.$container = options.$container;
+            this.$template = options.$template;
+            this.render();
+            this.listenTo(this.collection, 'destroy change', this.render);
+        },
+        render: function() {
+            var that = this;
+            this.$container.append(this.el);
+            this.$el.html(this.template(this.collection));
+            _.each(this.collection.models, function(model) {
+                that.renderOrderItem(model, that);});
+        },
+        renderOrderItem: function(model) {
+            var newOrderItem = new App.ConfirmOrderItemView({
+                model: model,
+                $container: this.$el.find('ul'),
+            });
+            console.log(newOrderItem);
+            newOrderItem.render();
+        },
+        events: {
+            'click .cancel-confirm' : 'cancelConfirmation'
+        },
+        cancelConfirmation: function(e) {
+            e.preventDefault();
+            this.remove();
+        }
+    });
+
+//confirmOrderItemView is the view that represents an individual order item
+//in the final confirmation screen of an order
+    App.ConfirmOrderItemView = App.BaseView.extend({
+        tagName: 'li',
+        className: 'order-item',
+        template: _.template($('#confirm-order-item-template').text()),
         render: function() {
             this.$container.append(this.el);
             this.$el.html(this.template(this.model.attributes));

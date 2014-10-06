@@ -75,10 +75,28 @@
     <script type="text/template" id="new-order-template">
         <h2>working order</h2>
         <ul></ul>
+        <input class="confirm-order-button" type="submit" value="Place your order">
     </script>
 
     <script type="text/template" id="working-order-item-template">
         <%= name %>
+    </script>
+
+    <script type="text/template" id="order-confirmation-template">
+        <h2>Review and submit your order</h2>
+        <ul></ul>
+        <form>
+          <input type="submit" value="Place your order">
+        </form>
+        <a href="#" class="cancel-confirm">Add to order</a>
+    </script>
+
+    <script type="text/template" id="confirm-order-item-template">
+        <h3>Item: <%= name %></h3>
+        <p>Meat: <%= meat %></p>
+        <p>Spice level: <%= spice %></p>
+        <p>vegan? <%= vegan %></p>
+        <p>special requests: <%= customize %></p>
     </script>
 
     <script type="text/template" id="order-item-options-template">

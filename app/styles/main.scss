@@ -2,6 +2,21 @@
 @import '../../bower_components/bourbon/dist/bourbon';
 @import '../../bower_components/neat/app/assets/stylesheets/neat';
 
+.background {
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: black;
+    opacity: .5;
+  }
+}
+
 .hidden {
   display: none;
 }
@@ -43,7 +58,8 @@ section {
 }
 
 .user-login,
-.order-item-options {
+.order-item-options,
+.confirm-order {
   background: #fff;
   border: solid 1px;
   border-radius: 3px;
@@ -53,6 +69,7 @@ section {
   height: 400px;
   overflow: scroll;
   width: 80%;
+  z-index: 1000;
 
   form {
     padding: rem(20);
@@ -71,13 +88,11 @@ section {
   }
 
   .cancel-login,
-  .cancel-item {
+  .cancel-item,
+  .cancel-confirm {
     float: right;
     margin-right: rem(10);
     margin-bottom: rem(10);
-    // position: absolute;
-    // right: rem(10);
-    // bottom: rem(10);
   }
 }
 
